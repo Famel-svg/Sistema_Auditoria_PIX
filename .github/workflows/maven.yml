@@ -1,0 +1,76 @@
+name: Java CI/CD Pipeline
+
+# Dispara em push para main/develop e em pull requests para main
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ------------------------------------------------------------------ #
+      # 1. Checkout do código                                                #
+      # ------------------------------------------------------------------ #
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ------------------------------------------------------------------ #
+      # 2. Setup do JDK 21                                                   #
+      # ------------------------------------------------------------------ #
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven        # cacheia ~/.m2 entre execuções — build mais rápido
+
+      # ------------------------------------------------------------------ #
+      # 3. Build — apenas compilação, sem testes                            #
+      # ------------------------------------------------------------------ #
+      - name: Build with Maven
+        run: ./mvnw clean compile -B
+
+      # ------------------------------------------------------------------ #
+      # 4. Testes unitários (H2 in-memory, sem Docker)                      #
+      #    PixServiceTest, PixControllerTest, EnversConfigTest               #
+      # ------------------------------------------------------------------ #
+      - name: Run Unit Tests
+        run: ./mvnw test -B -Dtest="PixServiceTest,PixControllerTest,EnversConfigTest"
+
+      # ------------------------------------------------------------------ #
+      # 5. Testes de integração (Testcontainers sobe PostgreSQL via Docker) #
+      #    AuditAspectTest — Docker já está disponível no ubuntu-latest      #
+      # ------------------------------------------------------------------ #
+      - name: Run Integration Tests
+        run: ./mvnw test -B -Dtest="AuditAspectTest"
+        env:
+          # Valores padrão usados como fallback; Testcontainers sobrescreve
+          # via @DynamicPropertySource em tempo de execução
+          DB_URL: jdbc:postgresql://localhost:5432/pix_auditoria_test
+          DB_USERNAME: test
+          DB_PASSWORD: test
+
+      # ------------------------------------------------------------------ #
+      # 6. Upload dos resultados de teste — executado SEMPRE, mesmo em falha#
+      # ------------------------------------------------------------------ #
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: target/surefire-reports/
+
+      # ------------------------------------------------------------------ #
+      # 7. Build da imagem Docker da aplicação                              #
+      #    Só executa se todos os testes passaram                           #
+      # ------------------------------------------------------------------ #
+      - name: Build Docker Image
+        run: ./mvnw spring-boot:build-image -B -DskipTests
+        env:
+          DB_URL: jdbc:postgresql://localhost:5432/pix_auditoria
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres

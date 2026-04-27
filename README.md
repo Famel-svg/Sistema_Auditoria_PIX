@@ -1,6 +1,8 @@
 # Sistema de Auditoria e Rastreabilidade PIX
 
-Este projeto consiste em um sistema back-end desenvolvido em **Java 21** e **Spring Boot** que expõe uma API REST para operações de transferência Pix, garantindo conformidade com normas de compliance bancário (Resolução BCB nº 1/2020) e **LGPD**.
+![CI/CD Pipeline](https://github.com/SEU_USUARIO/SEU_REPOSITORIO/actions/workflows/maven.yml/badge.svg)
+
+Sistema back-end desenvolvido em **Java 21** e **Spring Boot** que expõe uma API REST para operações de transferência Pix, garantindo conformidade com normas de compliance bancário (Resolução BCB nº 1/2020) e **LGPD**.
 
 O diferencial técnico reside na **rastreabilidade total**, respondendo quem realizou a operação, quando, o que mudou nos dados e de onde veio a requisição (IP e endpoint).
 
@@ -8,57 +10,49 @@ O diferencial técnico reside na **rastreabilidade total**, respondendo quem rea
 
 ## 🚀 Tecnologias e Stack Técnica
 
-*   **Java 21 (LTS)**: Utilização de recursos modernos como Virtual Threads.
-*   **Spring Boot 3.x**: Framework base para a construção da API.
-*   **Hibernate Envers**: Auditoria automática e versionamento das entidades JPA (Tabelas `_aud`).
-*   **Spring AOP (AspectJ)**: Interceptação transparente de requisições para log de contexto HTTP.
-*   **Spring Security**: Gestão de contexto de autenticação para identificação do autor das operações.
-*   **PostgreSQL**: Banco de dados relacional para persistência robusta.
-*   **Docker & Docker Compose**: Containerização completa da aplicação e infraestrutura.
-*   **Testcontainers**: Validação de testes de integração com instâncias reais de banco de dados.
-
----
-
-## 🏗️ Arquitetura: Modular Monolith
-
-O projeto adota a estrutura de Monólito Modular, inspirada em **Clean Architecture**, para garantir baixo acoplamento e alta coesão. O código é organizado nos seguintes pacotes:
-
-*   **domain**: Núcleo do sistema com entidades, enums e interfaces de repositório.
-*   **application**: Casos de uso e orquestração da lógica de negócio.
-*   **infrastructure**: Implementações concretas de persistência e integrações.
-*   **api**: Controladores REST e definições de DTOs.
-*   **aspect**: Camada isolada para auditoria transversal (AOP).
+- **Java 21 (LTS)**: Linguagem principal com recursos modernos.
+- **Spring Boot 3.x**: Framework base para a construção da API.
+- **Hibernate Envers**: Auditoria automática e versionamento das entidades JPA (tabelas `_aud`).
+- **Spring AOP (AspectJ)**: Interceptação transparente de requisições para log de contexto HTTP.
+- **Spring Security**: Gestão de contexto de autenticação para identificação do autor das operações.
+- **PostgreSQL**: Banco de dados relacional para persistência robusta.
+- **Docker & Docker Compose**: Containerização da infraestrutura local.
+- **Testcontainers**: Testes de integração com instância real de PostgreSQL via Docker.
+- **GitHub Actions**: Pipeline de CI/CD automatizado.
 
 ---
 
 ## 🛡️ Estratégia de Auditoria Híbrida
 
-Para garantir rastreabilidade completa, o sistema utiliza duas cadeias que operam em paralelo:
+Duas cadeias de auditoria operam em paralelo para garantir rastreabilidade completa:
 
 | Ferramenta | O que captura | Finalidade |
 | :--- | :--- | :--- |
-| **Hibernate Envers** | Diff de campos (antes x depois) | Histórico imutável de alterações nos dados. |
-| **Spring AOP** | Contexto HTTP (IP, Usuário, Endpoint) | Identificação da origem e autoria da requisição. |
+| **Hibernate Envers** | Diff de campos (antes × depois) | Histórico imutável de alterações nos dados |
+| **Spring AOP** | Contexto HTTP (IP, usuário, endpoint) | Identificação da origem e autoria da requisição |
 
 ---
 
 ## 🛠️ Como Executar
 
 ### Pré-requisitos
-*   Java 21 JDK
-*   Maven 3.9+
-*   Docker e Docker Compose
+- Java 21 JDK
+- Maven 3.9+
+- Docker e Docker Compose
 
 ### Passo a Passo
 
 1. **Clonar o repositório:**
    ```bash
-   git clone https://github.com/seu-usuario/auditoria_e_rastreabilidade.git
-   cd auditoria_e_rastreabilidade
+   git clone https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git
+   cd pix-auditoria
    ```
 
 2. **Configurar variáveis de ambiente:**
-   Copie o arquivo `.env.example` para `.env` (se disponível) e ajuste as credenciais se necessário.
+   ```bash
+   cp .env.example .env
+   # Edite o .env com suas credenciais locais
+   ```
 
 3. **Subir a infraestrutura (PostgreSQL):**
    ```bash
@@ -70,16 +64,39 @@ Para garantir rastreabilidade completa, o sistema utiliza duas cadeias que opera
    ./mvnw spring-boot:run
    ```
 
+### Como Rodar os Testes
+
+```bash
+# Todos os testes (requer Docker para os de integração)
+./mvnw test
+
+# Apenas testes unitários (sem Docker)
+./mvnw test -Dtest="PixServiceTest,PixControllerTest,EnversConfigTest"
+
+# Apenas testes de integração
+./mvnw test -Dtest="AuditAspectTest"
+```
+
 ---
 
-## 📋 Endpoints Principais
-
-A documentação interativa completa pode ser acessada via Swagger UI em: `http://localhost:8080/swagger-ui.html`
+## 📋 Endpoints da API
 
 | Método | Path | Descrição |
 | :--- | :--- | :--- |
-| `POST` | `/api/pix/transferencias` | Cria uma nova transferência Pix. |
-| `GET` | `/api/pix/transferencias/{id}` | Busca detalhes de uma transferência. |
-| `GET` | `/api/pix/transferencias/{id}/historico` | Retorna o histórico de revisões (Envers). |
-| `PATCH` | `/api/pix/transferencias/{id}/cancelar` | Realiza o cancelamento de uma transferência. |
-| `GET` | `/api/pix/audit` | Consulta logs de contexto (AOP) com filtros. |
+| `POST` | `/api/pix/transferencias` | Cria uma nova transferência Pix |
+| `GET` | `/api/pix/transferencias/{id}` | Busca detalhes de uma transferência |
+| `GET` | `/api/pix/transferencias/{id}/historico` | Retorna o histórico de revisões (Envers) |
+| `PATCH` | `/api/pix/transferencias/{id}/cancelar` | Cancela uma transferência pendente |
+| `GET` | `/api/pix/transferencias?chave={chave}` | Lista transferências por chave Pix |
+
+---
+
+## ⚙️ CI/CD
+
+O pipeline é executado automaticamente a cada `push` para `main` ou `develop` e em pull requests. As etapas são:
+
+1. **Build** — compila o projeto com Maven
+2. **Testes unitários** — executa sem dependência de banco de dados
+3. **Testes de integração** — sobe PostgreSQL real via Testcontainers
+4. **Upload de resultados** — artefatos disponíveis mesmo em caso de falha
+5. **Build da imagem Docker** — gera imagem pronta para deploy
