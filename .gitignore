@@ -31,4 +31,22 @@ build/
 
 ### VS Code ###
 .vscode/
-.env/
+
+# =============================================================================
+# SEGREDOS E CONFIGURAÇÕES SENSÍVEIS — NUNCA commitar estes arquivos
+# =============================================================================
+
+# Arquivo de variáveis de ambiente local (criado a partir de .env.example)
+.env
+
+# Configurações locais que podem conter credenciais reais
+application-local.properties
+src/main/resources/application-local.properties
+
+# Logs da aplicação
+*.log
+logs/
+
+# Arquivos de dump de banco
+*.sql.bak
+*.dump
