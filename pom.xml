@@ -95,6 +95,73 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <!-- ============================================================
+                 JaCoCo — Cobertura de código
+                 ============================================================ -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+
+                    <!-- 1. Injeta o agente JaCoCo antes dos testes rodarem -->
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- 2. Gera o relatório HTML após os testes -->
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+
+                    <!-- 3. Valida cobertura mínima — falha o build se não atingir -->
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+
+                            <!-- Classes excluídas da cobertura:
+                                 - DTOs (records sem lógica)
+                                 - Entidades JPA (getters/setters gerados)
+                                 - Enums simples
+                                 - Classe main do Spring Boot
+                                 - Exceptions simples
+                                 - Classes de configuração -->
+                            <excludes>
+                                <exclude>br/com/pixauditoria/dto/**</exclude>
+                                <exclude>br/com/pixauditoria/domain/entity/**</exclude>
+                                <exclude>br/com/pixauditoria/exception/**</exclude>
+                                <exclude>br/com/pixauditoria/PixAuditoriaApplication.class</exclude>
+                                <exclude>br/com/pixauditoria/config/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

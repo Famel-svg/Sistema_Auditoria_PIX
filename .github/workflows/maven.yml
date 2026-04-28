@@ -55,7 +55,26 @@ jobs:
           DB_PASSWORD: test
 
       # ------------------------------------------------------------------ #
-      # 6. Upload dos resultados de teste — executado SEMPRE, mesmo em falha#
+      # 6. Gera relatório JaCoCo e valida cobertura mínima de 80%          #
+      # ------------------------------------------------------------------ #
+      - name: Generate Coverage Report
+        run: ./mvnw jacoco:report -B
+
+      - name: Check Coverage Threshold (≥ 80%)
+        run: ./mvnw jacoco:check -B
+
+      # ------------------------------------------------------------------ #
+      # 7. Publica relatório HTML como artefato navegável                   #
+      # ------------------------------------------------------------------ #
+      - name: Upload Coverage Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/
+
+      # ------------------------------------------------------------------ #
+      # 8. Upload dos resultados de teste — executado SEMPRE, mesmo em falha#
       # ------------------------------------------------------------------ #
       - name: Upload Test Results
         if: always()
@@ -65,8 +84,8 @@ jobs:
           path: target/surefire-reports/
 
       # ------------------------------------------------------------------ #
-      # 7. Build da imagem Docker da aplicação                              #
-      #    Só executa se todos os testes passaram                           #
+      # 9. Build da imagem Docker da aplicação                              #
+      #    Só executa se todos os testes e cobertura passaram               #
       # ------------------------------------------------------------------ #
       - name: Build Docker Image
         run: ./mvnw spring-boot:build-image -B -DskipTests
