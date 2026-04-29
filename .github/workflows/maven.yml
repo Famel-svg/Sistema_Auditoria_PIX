@@ -32,7 +32,7 @@ jobs:
       # 2. Setup do JDK 21                                                   #
       # ------------------------------------------------------------------ #
       - name: Make Maven Wrapper executable
-          run: chmod +x ./mvnw
+        run: chmod +x ./mvnw
 
       # ------------------------------------------------------------------ #
       # 3. Build — apenas compilação, sem testes                            #
