@@ -5,12 +5,15 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernatePropertiesCustomi
 import org.springframework.context.annotation.Bean;
 import java.util.Map;
 
+import org.springframework.context.annotation.Configuration;
+
 /*
  * Configuração explícita do Hibernate Envers.
  * Move as propriedades do Envers que estavam em application.properties
  * para código Java, tornando-as visíveis, testáveis e centralizadas.
  */
 
+@Configuration
 public class EnversConfig {
 
     @Bean

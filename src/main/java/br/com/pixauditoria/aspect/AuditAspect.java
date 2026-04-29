@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import java.util.Optional;
 
 @Aspect
 @Component
+@Order(1)
 public class AuditAspect {
 
     private final AuditLogRepository auditLogRepository;
@@ -40,9 +42,19 @@ public class AuditAspect {
                     .map(Authentication::getName)
                     .orElse("ANONIMO");
 
-            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-            String ip = request.getRemoteAddr();
-            String endpoint = request.getRequestURI();
+            String ip = "N/A";
+            String endpoint = "N/A";
+
+            try {
+                ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+                if (attributes != null) {
+                    HttpServletRequest request = attributes.getRequest();
+                    ip = request.getRemoteAddr();
+                    endpoint = request.getRequestURI();
+                }
+            } catch (Exception e) {
+                // Fora de um contexto de request (ex: chamadas internas ou alguns testes)
+            }
 
             AuditLog log = new AuditLog(usuario, ip, metodo, endpoint, "PixTransferencia");
             auditLogRepository.save(log);
