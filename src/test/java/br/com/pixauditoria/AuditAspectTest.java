@@ -31,6 +31,9 @@ class AuditAspectTest {
     @Autowired
     private AuditLogRepository auditLogRepository;
 
+    @Autowired
+    private br.com.pixauditoria.service.PixService pixService;
+
     @BeforeEach
     void limparAuditLog() {
         auditLogRepository.deleteAll();
@@ -137,5 +140,23 @@ class AuditAspectTest {
         AuditLog log = logs.get(0);
         assertThat(log.getIp()).isNotBlank();
         assertThat(log.getEndpoint()).contains("/api/pix/transferencias");
+    }
+
+    @Test
+    void deveRegistrarLogComAnonimoESemRequest() {
+        // Chamada direta ao repositório ou mock que não passa pelo SecurityContext
+        // No entanto, o Aspect intercepta o Service.
+        // Vamos usar o PixService injetado diretamente (sem request context de thread)
+        // SpringBootTest injeta o serviço real.
+        // Se eu chamar pixService.listarPorChave("x") aqui, ele está fora do contexto de request HTTP.
+
+        pixService.listarPorChave("qualquer");
+
+        List<AuditLog> logs = auditLogRepository.findAll();
+        assertThat(logs).isNotEmpty();
+        AuditLog log = logs.get(0);
+        assertThat(log.getUsuario()).isEqualTo("ANONIMO");
+        assertThat(log.getIp()).isEqualTo("N/A");
+        assertThat(log.getEndpoint()).isEqualTo("N/A");
     }
 }

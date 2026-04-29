@@ -4,6 +4,7 @@ import br.com.pixauditoria.domain.entity.PixTransferencia;
 import br.com.pixauditoria.domain.entity.TransferenciaStatus;
 import br.com.pixauditoria.dto.PixRequest;
 import br.com.pixauditoria.dto.PixResponse;
+import br.com.pixauditoria.dto.AuditLogResponse;
 import br.com.pixauditoria.exception.TransferenciaInvalidaException;
 import br.com.pixauditoria.exception.TransferenciaNaoEncontradaException;
 import br.com.pixauditoria.repository.AuditLogRepository;
@@ -76,5 +77,25 @@ class PixServiceTest {
         UUID id = UUID.randomUUID();
         when(pixRepository.findById(id)).thenReturn(Optional.empty());
         assertThrows(TransferenciaNaoEncontradaException.class, () -> pixService.buscarPorId(id));
+    }
+
+    @Test
+    void deveBuscarPorIdComSucesso() {
+        UUID id = UUID.randomUUID();
+        PixTransferencia t = new PixTransferencia("origem", "destino", BigDecimal.TEN);
+        when(pixRepository.findById(id)).thenReturn(Optional.of(t));
+
+        PixResponse resp = pixService.buscarPorId(id);
+        assertNotNull(resp);
+        assertEquals("origem", resp.chaveOrigem());
+    }
+
+    @Test
+    void deveListarPorChave() {
+        String chave = "test";
+        when(pixRepository.findByChaveOrigemOrChaveDestino(chave, chave)).thenReturn(java.util.List.of());
+
+        java.util.List<PixResponse> result = pixService.listarPorChave(chave);
+        assertTrue(result.isEmpty());
     }
 }
