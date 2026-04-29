@@ -63,7 +63,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- H2 — mantido para testes unitários rápidos (PixServiceTest, etc.) -->
+        <!-- H2 — testes unitários rápidos sem banco externo -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -71,7 +71,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Testcontainers — testes de integração com PostgreSQL real -->
+        <!-- Testcontainers — testes de integração com PostgreSQL real (*IT.java) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-testcontainers</artifactId>
@@ -97,23 +97,54 @@
             </plugin>
 
             <!-- ============================================================
+                 Surefire — testes unitários (./mvnw test)
+                 ============================================================ -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>@{argLine} -Dnet.bytebuddy.experimental=true</argLine>
+                    <excludes>
+                        <exclude>**/*IT.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- ============================================================
+                 Failsafe — testes de integração (./mvnw verify)
+                 Arquivos *IT.java rodam aqui. Requerem Docker disponível.
+                 ============================================================ -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <argLine>@{argLine} -Dnet.bytebuddy.experimental=true</argLine>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- ============================================================
                  JaCoCo — Cobertura de código
+                 Relatório: target/site/jacoco/index.html
                  ============================================================ -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
                 <executions>
-
-                    <!-- 1. Injeta o agente JaCoCo antes dos testes rodarem -->
                     <execution>
                         <id>prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
-
-                    <!-- 2. Gera o relatório HTML após os testes -->
                     <execution>
                         <id>report</id>
                         <phase>verify</phase>
@@ -121,8 +152,6 @@
                             <goal>report</goal>
                         </goals>
                     </execution>
-
-                    <!-- 3. Valida cobertura mínima — falha o build se não atingir -->
                     <execution>
                         <id>check</id>
                         <phase>verify</phase>
@@ -142,14 +171,6 @@
                                     </limits>
                                 </rule>
                             </rules>
-
-                            <!-- Classes excluídas da cobertura:
-                                 - DTOs (records sem lógica)
-                                 - Entidades JPA (getters/setters gerados)
-                                 - Enums simples
-                                 - Classe main do Spring Boot
-                                 - Exceptions simples
-                                 - Classes de configuração -->
                             <excludes>
                                 <exclude>br/com/pixauditoria/dto/**</exclude>
                                 <exclude>br/com/pixauditoria/domain/entity/**</exclude>
@@ -159,7 +180,6 @@
                             </excludes>
                         </configuration>
                     </execution>
-
                 </executions>
             </plugin>
         </plugins>

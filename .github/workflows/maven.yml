@@ -29,20 +29,26 @@ jobs:
           cache: maven        # cacheia ~/.m2 entre execuções — build mais rápido
 
       # ------------------------------------------------------------------ #
-      # 3. Build — apenas compilação, sem testes                            #
+      # 3. Tornar o Maven Wrapper executável                                 #
+      # ------------------------------------------------------------------ #
+      - name: Make Maven Wrapper executable
+        run: chmod +x ./mvnw
+
+      # ------------------------------------------------------------------ #
+      # 4. Build — apenas compilação, sem testes                            #
       # ------------------------------------------------------------------ #
       - name: Build with Maven
         run: ./mvnw clean compile -B
 
       # ------------------------------------------------------------------ #
-      # 4. Testes unitários (H2 in-memory, sem Docker)                      #
+      # 5. Testes unitários (H2 in-memory, sem Docker)                      #
       #    PixServiceTest, PixControllerTest, EnversConfigTest               #
       # ------------------------------------------------------------------ #
       - name: Run Unit Tests
         run: ./mvnw test -B -Dtest="PixServiceTest,PixControllerTest,EnversConfigTest"
 
       # ------------------------------------------------------------------ #
-      # 5. Testes de integração (Testcontainers sobe PostgreSQL via Docker) #
+      # 6. Testes de integração (Testcontainers sobe PostgreSQL via Docker) #
       #    AuditAspectTest — Docker já está disponível no ubuntu-latest      #
       # ------------------------------------------------------------------ #
       - name: Run Integration Tests
@@ -55,7 +61,7 @@ jobs:
           DB_PASSWORD: test
 
       # ------------------------------------------------------------------ #
-      # 6. Gera relatório JaCoCo e valida cobertura mínima de 80%          #
+      # 7. Gera relatório JaCoCo e valida cobertura mínima de 80%          #
       # ------------------------------------------------------------------ #
       - name: Generate Coverage Report
         run: ./mvnw jacoco:report -B
@@ -64,7 +70,7 @@ jobs:
         run: ./mvnw jacoco:check -B
 
       # ------------------------------------------------------------------ #
-      # 7. Publica relatório HTML como artefato navegável                   #
+      # 8. Publica relatório HTML como artefato navegável                   #
       # ------------------------------------------------------------------ #
       - name: Upload Coverage Report
         if: always()
@@ -74,7 +80,7 @@ jobs:
           path: target/site/jacoco/
 
       # ------------------------------------------------------------------ #
-      # 8. Upload dos resultados de teste — executado SEMPRE, mesmo em falha#
+      # 9. Upload dos resultados de teste — executado SEMPRE, mesmo em falha#
       # ------------------------------------------------------------------ #
       - name: Upload Test Results
         if: always()
@@ -84,7 +90,7 @@ jobs:
           path: target/surefire-reports/
 
       # ------------------------------------------------------------------ #
-      # 9. Build da imagem Docker da aplicação                              #
+      # 10. Build da imagem Docker da aplicação                             #
       #    Só executa se todos os testes e cobertura passaram               #
       # ------------------------------------------------------------------ #
       - name: Build Docker Image
