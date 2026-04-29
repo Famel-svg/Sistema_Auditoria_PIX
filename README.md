@@ -1,6 +1,6 @@
 # Sistema de Auditoria e Rastreabilidade PIX
 
-![CI/CD Pipeline](https://github.com/SEU_USUARIO/SEU_REPOSITORIO/actions/workflows/maven.yml/badge.svg)
+![CI/CD Pipeline](https://github.com/rafaelsilva/auditoria_e_rastreabilidade/actions/workflows/maven.yml/badge.svg)
 
 Sistema back-end em **Java 21** e **Spring Boot** que expõe uma API REST para operações de transferência Pix com **rastreabilidade total** de cada alteração de dados — respondendo às perguntas de compliance:
 
@@ -150,7 +150,7 @@ cp .env.example .env
 
 ```bash
 # 1. Clonar o repositório
-git clone https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git
+git clone https://github.com/Famel-svg/Sistema_Auditoria_PIX
 cd pix-auditoria
 
 # 2. Configurar variáveis de ambiente
