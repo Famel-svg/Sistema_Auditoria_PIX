@@ -138,6 +138,27 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.12</version>
+                <configuration>
+                    <rules>
+                        <rule>
+                            <element>BUNDLE</element>
+                            <limits>
+                                <limit>
+                                    <counter>LINE</counter>
+                                    <value>COVEREDRATIO</value>
+                                    <minimum>0.80</minimum>
+                                </limit>
+                            </limits>
+                        </rule>
+                    </rules>
+                    <excludes>
+                        <exclude>br/com/pixauditoria/dto/**</exclude>
+                        <exclude>br/com/pixauditoria/domain/entity/**</exclude>
+                        <exclude>br/com/pixauditoria/exception/**</exclude>
+                        <exclude>br/com/pixauditoria/PixAuditoriaApplication.class</exclude>
+                        <exclude>br/com/pixauditoria/config/**</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
@@ -158,27 +179,6 @@
                         <goals>
                             <goal>check</goal>
                         </goals>
-                        <configuration>
-                            <rules>
-                                <rule>
-                                    <element>BUNDLE</element>
-                                    <limits>
-                                        <limit>
-                                            <counter>LINE</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.80</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                            </rules>
-                            <excludes>
-                                <exclude>br/com/pixauditoria/dto/**</exclude>
-                                <exclude>br/com/pixauditoria/domain/entity/**</exclude>
-                                <exclude>br/com/pixauditoria/exception/**</exclude>
-                                <exclude>br/com/pixauditoria/PixAuditoriaApplication.class</exclude>
-                                <exclude>br/com/pixauditoria/config/**</exclude>
-                            </excludes>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
