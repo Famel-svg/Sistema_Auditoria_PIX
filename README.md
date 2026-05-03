@@ -1,6 +1,6 @@
 # Sistema de Auditoria e Rastreabilidade PIX
 
-[![CI/CD Pipeline](https://github.com/Famel-svg/auditoria_e_rastreabilidade/actions/workflows/maven.yml/badge.svg)](https://github.com/Famel-svg/auditoria_e_rastreabilidade/actions/workflows/maven.yml)
+![CI/CD Pipeline](https://github.com/SEU_USUARIO/SEU_REPOSITORIO/actions/workflows/maven.yml/badge.svg)
 
 Sistema back-end em **Java 21** e **Spring Boot** que expõe uma API REST para operações de transferência Pix com **rastreabilidade total** de cada alteração de dados — respondendo às perguntas de compliance:
 
@@ -24,6 +24,7 @@ Desenvolvido com conformidade às normas do Banco Central (Resolução BCB nº 1
 | Spring Security | incluso no Boot | Contexto de autenticação por operação |
 | PostgreSQL | 16 | Banco de dados principal |
 | H2 | 2.4.x | Banco in-memory exclusivo para testes |
+| JUnit 5 | incluso no Boot | Framework de testes unitários e de integração |
 | JaCoCo | 0.8.12 | Cobertura de código (mínimo 80%) |
 | GitHub Actions | — | Pipeline CI/CD automatizado |
 | Docker & Docker Compose | — | Infraestrutura local |
@@ -150,7 +151,7 @@ cp .env.example .env
 
 ```bash
 # 1. Clonar o repositório
-git clone https://github.com/Famel-svg/Sistema_Auditoria_PIX
+git clone https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git
 cd pix-auditoria
 
 # 2. Configurar variáveis de ambiente
@@ -185,7 +186,7 @@ start target\site\jacoco\index.html
 
 | Classe | Tipo | O que valida |
 | :--- | :--- | :--- |
-| `PixServiceTest` | Unitário (Mockito) | Regras de negócio, transições de estado, exceções |
+| `PixServiceTest` | Unitário (JUnit 5) | Regras de negócio, transições de estado, exceções |
 | `PixControllerTest` | Camada web (MockMvc) | Status HTTP, Bean Validation, SecurityConfig |
 | `EnversConfigTest` | Unitário puro | As 4 propriedades do Envers configuradas |
 | `AuditAspectTest` | Integração (H2 + HTTP real) | Log salvo em sucesso, em falha, IP e endpoint capturados |

@@ -4,7 +4,6 @@ import br.com.pixauditoria.domain.entity.PixTransferencia;
 import br.com.pixauditoria.domain.entity.TransferenciaStatus;
 import br.com.pixauditoria.dto.PixRequest;
 import br.com.pixauditoria.dto.PixResponse;
-import br.com.pixauditoria.dto.AuditLogResponse;
 import br.com.pixauditoria.exception.TransferenciaInvalidaException;
 import br.com.pixauditoria.exception.TransferenciaNaoEncontradaException;
 import br.com.pixauditoria.repository.AuditLogRepository;
@@ -15,11 +14,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
