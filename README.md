@@ -1,6 +1,6 @@
 # Sistema de Auditoria e Rastreabilidade PIX
 
-![CI/CD Pipeline](https://github.com/SEU_USUARIO/SEU_REPOSITORIO/actions/workflows/maven.yml/badge.svg)
+[![CI/CD Pipeline](https://github.com/Famel-svg/Sistema_Auditoria_PIX/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/Famel-svg/Sistema_Auditoria_PIX/actions/workflows/maven.yml)
 
 Sistema back-end em **Java 21** e **Spring Boot** que expõe uma API REST para operações de transferência Pix com **rastreabilidade total** de cada alteração de dados — respondendo às perguntas de compliance:
 
