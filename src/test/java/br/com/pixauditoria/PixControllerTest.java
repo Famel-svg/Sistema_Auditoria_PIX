@@ -10,16 +10,26 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(PixController.class)
-@Import(SecurityConfig.class) // carrega o csrf().disable() e anyRequest().permitAll()
+@Import(SecurityConfig.class) // csrf desabilitado (API stateless) e anyRequest().authenticated()
+@WithMockUser
 class PixControllerTest {
 
     @Autowired private MockMvc mockMvc;
     @MockBean private PixService pixService;
+
+    @Test
+    @WithAnonymousUser
+    void deveExigirAutenticacao() throws Exception {
+        mockMvc.perform(get("/api/pix/transferencias").param("chave", "abc"))
+                .andExpect(status().isUnauthorized());
+    }
 
     @Test
     void deveRetornar400SeDadosInvalidos() throws Exception {
